@@ -38,7 +38,7 @@ def compile_caption(spec: dict, lyrics: dict) -> str:
     if vocal["mode"] == "instrumental":
         lines.append("Instrumental track - No vocals.")
         lead = join_items(arrangement["primary_layers"]) or "an unspecified lead instrument"
-        lines.append(f"The lead melodic role is carried by {lead}.")
+        lines.append(f"Lead melodic role: {lead}.")
     else:
         lines.extend([
             f"Vocal Gender & Timbre: {vocal['lead'] or 'unspecified'}" + (f"; {join_items(vocal['timbre'])}" if vocal["timbre"] else "") + ".",
@@ -50,7 +50,7 @@ def compile_caption(spec: dict, lyrics: dict) -> str:
         "",
         "Arrangement",
         f"Arrangement Template: {arrangement['template_id'] or 'none specified'}.",
-        f"Instrument Lifecycle Description (Primary/Secondary Layering): primary {join_items(arrangement['primary_layers']) or 'unspecified'}; secondary {join_items(arrangement['secondary_layers']) or 'unspecified'}.",
+        f"Instrument Lifecycle Description (Primary/Secondary Layering): Primary - {join_items(arrangement['primary_layers']) or 'unspecified'}; Secondary - {join_items(arrangement['secondary_layers']) or 'unspecified'}.",
         f"Groove & Foundation Progression: {join_items(arrangement['foundation']) or 'unspecified'}.",
         f"Opening, Transitions, Climax & Spatial FX: {join_items(arrangement['transitions']) or 'unspecified'}.",
     ])

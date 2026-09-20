@@ -1,78 +1,111 @@
 # Music3 Guided Creation Skill
 
-面向 Music3 的引导式歌曲创作 Skill。它把自然语言创作意图逐步整理为可审阅、可修改、可追溯的 `creative_spec.json`、`lyrics_document.json` 和 `generation_request.json`。
+独立的 Music3 引导式歌曲创作 Skill：先让创作者参与关键选择，再输出可审阅、可返改、可验证的结构化创作包，并可在本地编译为直接传入 Music3 的 `caption` 与 `lyrics`。
 
-## 解决什么问题
+## 核心边界
 
-- 避免只问一两个问题就直接生成整首草稿。
-- 让创作者参与主题、情绪、风格、场景、歌曲形态、长度、节奏、配器、人声/主奏、结构和情绪起伏等关键选择。
-- 把歌词正文与音乐指令分开，输出 Music3 可适配的结构化数据。
-- 把意图确认、音乐方案确认、草稿接受和生成授权严格分开。
-- 支持返回修改、纯器乐、多声线软提示、版本迭代与反馈路由。
-
-## 不包含什么
-
-本仓库不包含模型权重、推理服务、SSH 配置、队列客户端、私有主机地址、歌曲素材或音频成品。它在“生成适配器”边界停止；具体后端必须自行实现认证、编译、提交、轮询、下载和文件验收。
+- 不包含模型权重、推理服务、SSH、私有主机、队列客户端、凭据、歌曲素材或音频
+- 不连接后端、不上传文件、不轮询任务、不下载资产、不安装依赖
+- 不假定 FAEX1、Windows、Linux、工作目录或 API 地址
+- 具体后端由外部适配器实现：认证、当前 Schema 复核、提交、监测、下载和技术验收
+- 没有适配器时，Skill 仍完整交付本地创作包和可直接映射到 Music3 的结果
 
 ## 默认流程
 
-1. 创作意图：至少 6 个独立问答，覆盖主题、情绪、风格、使用场景、歌曲形态、目标长度。
-2. 歌词：新写、检查或在明确权限内修改；纯器乐跳过歌词正文。
-3. 音乐设计：至少 5 个独立问答，覆盖节奏速度、配器、人声/主奏、结构、情绪起伏。
-4. 完整草稿：展示歌词和逐段音乐推进，提供风格、节奏、配器、表现、结构调整入口。
-5. 结构化输出：生成 Music3 适配文件并运行只读校验。
-6. 生成交接：只有用户明确授权后，才把已确认版本交给外部后端适配器。
-7. 反馈迭代：区分歌词、编曲、演唱、时长和运行问题，只重做受影响部分。
+1. **创作意图**：至少 6 个实际回答的独立问题，覆盖主题、情绪、风格、使用场景、歌曲形态、目标长度
+2. **意图摘要确认**：题数、维度、缺口和冲突均通过后才继续
+3. **歌词创作或适配**：新写、续写、检查或授权范围内修改；纯器乐跳过歌词正文
+4. **歌词检查**：保留母稿、锁定句、段落顺序和重复次数
+5. **音乐设计**：至少 5 个独立问题，覆盖节奏速度、配器、人声/主奏、结构、情绪起伏
+6. **整体音乐方案确认**：确认逐段推进、声部安排、保留项和建议
+7. **完整草稿与返改**：提供风格、节奏、配器、表现、结构调整；先澄清目标再改
+8. **结构化输出**：生成四个版本文件并运行只读校验
+9. **直接 Music3 输入**：本地编译成 `caption` 和 `lyrics`；不代表已连接或提交模型
 
-## 安装
+## 独立安装
 
-把本仓库克隆到支持 Skill 的宿主目录，确保 `SKILL.md` 位于技能根目录。不同宿主的技能目录和启用方式不同，本仓库不自动修改用户配置。
+将仓库放到宿主的 Skill 目录，确保 `SKILL.md` 位于技能根目录。不同 Agent 宿主的安装和启用方式不同，本项目不自动修改宿主配置。
 
-## 使用
+## 输出目录
 
-向助手提出“创作一首歌”“做一段 Music3 配乐”或“把这份歌词整理成 Music3 输入”。Skill 会按 `references/interaction-policy.json` 逐题引导。
-
-输出目录建议使用同一版本前缀：
+每首歌使用一个独立版本目录：
 
 ```text
-<slug>-v1.guidance.json
-<slug>-v1.creative_spec.json
-<slug>-v1.lyrics_document.json
-<slug>-v1.generation_request.json
+<song-id>-vN/
+├── guidance.json
+├── creative_spec.json
+├── lyrics_document.json
+└── generation_request.json
 ```
 
-校验示例：
+文件说明：
+
+- `guidance.json`：实际问答、维度覆盖、推荐状态、阶段确认、草稿接受和生成授权
+- `creative_spec.json`：音乐描述
+- `lyrics_document.json`：段落标签、歌词和逐段音乐意图
+- `generation_request.json`：时长、seed（随机种子）、版本数和淡出设置
+
+## 本地命令
+
+仅使用 Python 标准库，不联网、不安装依赖：
 
 ```text
 python scripts/validate_bundle.py examples/vocal
 python scripts/validate_bundle.py examples/instrumental
+python scripts/compile_music3_input.py examples/vocal --out vocal-music3-input.json
+python scripts/compile_music3_input.py examples/instrumental --out instrumental-music3-input.json
 ```
 
-校验器只读取指定示例目录和仓库内配置，不联网、不读取凭据、不写文件、不调用模型。
+编译结果固定为：
+
+```json
+{
+  "caption": "Global Metadata...",
+  "lyrics": "[Verse]..."
+}
+```
+
+`caption` 只包含音乐描述，`lyrics` 只包含 Music3 安全段落标签和可唱正文；器乐段使用 `(instrumental)` 占位。外部适配器必须再次对照目标后端当前 Schema 和长度限制。
+
+## 重要默认值
+
+```json
+{
+  "duration_mode": "auto",
+  "duration_seconds": null,
+  "seed_mode": "random",
+  "seed": null,
+  "versions": 1,
+  "fade_out_seconds": 0
+}
+```
+
+目标时长用于安排歌词量、结构和器乐留白，不自动变成硬上限。固定 seed、多版本、重试、裁剪和淡出需要额外授权。
 
 ## 目录
 
 ```text
-SKILL.md                         Skill 主入口
+SKILL.md                            Skill 主入口
 references/interaction-policy.json  提问与放行配置
-references/workflow.md          完整交互与迭代规则
-references/music3-contract.md   Music3 结构化字段约定
-references/lyrics-guide.md      歌词母稿、锁定与适配规则
-schemas/                        输出 JSON Schema
-scripts/validate_bundle.py      标准库只读校验器
-examples/                       有人声与纯器乐示例
-SECURITY_AUDIT.md               发布前安全审计报告
+references/workflow.md              完整交互与迭代规则
+references/music3-contract.md       Music3 结构化字段约定
+references/lyrics-guide.md          歌词母稿、锁定与适配规则
+schemas/                             结构化输出与直接输入 Schema
+scripts/validate_bundle.py           标准库只读校验器
+scripts/compile_music3_input.py      本地 caption/lyrics 编译器
+examples/                            有人声与纯器乐示例
+SECURITY_AUDIT.md                    发布前安全审计报告
+NOTICE.md                            独立性和商标说明
 ```
 
 ## 兼容性边界
 
-- 当前结构以 Music3 的三段式音乐描述和 9 个安全段落标签为适配目标。
-- 目标时长用于安排素材，不等于精确定长保证。
-- 多声线、纯器乐、逐段角色和收尾均属于软提示，实际效果需要生成后听检。
-- 后端字段或限制变化时，应先更新 `references/music3-contract.md`、Schema 和示例，再重新审计。
+- 目标是 Music3 三段式音乐描述和 9 个安全段落标签
+- 后端字段、长度限制和任务接口可能变化；快照 Schema 必须由外部适配器复核
+- 多声线、纯器乐、逐段角色和收尾均属于软提示，实际效果需要生成后听检
+- 编译成功只证明文本转换完成，不证明模型接受、排队、生成或音频质量合格
+- 适配器须独立处理 Music3/MiniMax-Music3 许可证、用户输入权利、生成内容权利和安全策略
 
 ## 商标与许可
 
-Music3 与 MiniMax-Music3 的名称归其权利人所有。本项目是独立的兼容性工作流，不隶属于或代表模型提供方，也不分发模型权重。
-
-本仓库当前未附带开源许可证。公开可读不等于获得复制、修改或商用授权；如需开放复用，请由仓库所有者另行选择许可证。
+Music3 与 MiniMax-Music3 的名称归其权利人所有。本项目是独立兼容性工作流，不隶属于或代表模型提供方，也不分发模型权重。本仓库当前不附带开源许可证；如需开放复用，请由仓库所有者另行选择许可证。

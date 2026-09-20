@@ -66,7 +66,8 @@
 
 - `section_id`: UUID
 - `tag`: `Intro`、`Verse`、`Pre-Chorus`、`Chorus`、`Post-Chorus`、`Bridge`、`Instrumental`、`Solo`、`Outro`
-- `title`: 可读段名
+- `title`: 可读段名；编译为直接 Music3 文本时使用安全 `tag`，不把中文标题作为标签
+- 直接文本中的器乐段：使用 `(instrumental)`，不把它当歌词
 - `instrumental`: 布尔值
 - `lines`: 可唱正文；器乐段为空数组
 - `music_intent`: 本段进入、退出、强弱、声部和转场变化

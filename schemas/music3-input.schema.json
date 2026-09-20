@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Music3 direct model input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["caption", "lyrics"],
+  "properties": {
+    "caption": {"type": "string", "minLength": 1, "maxLength": 12000},
+    "lyrics": {"type": "string", "maxLength": 20000}
+  }
+}

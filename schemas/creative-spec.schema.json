@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Music3 creative spec compatibility profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "project_id", "revision", "global", "vocal", "arrangement"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "project_id": {"type": "string", "format": "uuid"},
+    "revision": {"type": "integer", "minimum": 0},
+    "global": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary_genre", "fusion_genres", "primary_mood", "secondary_moods", "tempo_mode", "bpm", "key", "energy", "imagery", "production", "custom_notes"],
+      "properties": {
+        "primary_genre": {"type": "string", "minLength": 1, "maxLength": 100},
+        "fusion_genres": {"type": "array", "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}},
+        "primary_mood": {"type": "string", "minLength": 1, "maxLength": 100},
+        "secondary_moods": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}},
+        "tempo_mode": {"type": ["string", "null"], "enum": ["slow", "medium", "fast", "bpm", null]},
+        "bpm": {"type": ["integer", "null"], "minimum": 20, "maximum": 300},
+        "key": {"type": ["string", "null"], "maxLength": 100},
+        "energy": {"type": ["string", "null"], "maxLength": 100},
+        "imagery": {"type": "array", "items": {"type": "string", "maxLength": 300}},
+        "production": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 300}},
+        "custom_notes": {"type": "string", "maxLength": 4000}
+      }
+    },
+    "vocal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "lead", "timbre", "delivery", "harmony", "effects"],
+      "properties": {
+        "mode": {"enum": ["vocal", "instrumental"]},
+        "lead": {"type": ["string", "null"], "maxLength": 100},
+        "timbre": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 200}},
+        "delivery": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 300}},
+        "harmony": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 300}},
+        "effects": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 300}}
+      }
+    },
+    "arrangement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["template_id", "primary_layers", "secondary_layers", "foundation", "transitions", "section_development"],
+      "properties": {
+        "template_id": {"type": ["string", "null"], "maxLength": 100},
+        "primary_layers": {"type": "array", "items": {"type": "string", "maxLength": 1000}},
+        "secondary_layers": {"type": "array", "items": {"type": "string", "maxLength": 1000}},
+        "foundation": {"type": "array", "items": {"type": "string", "maxLength": 1000}},
+        "transitions": {"type": "array", "items": {"type": "string", "maxLength": 1000}},
+        "section_development": {"type": "array", "items": {"type": "string", "maxLength": 1000}}
+      }
+    }
+  }
+}

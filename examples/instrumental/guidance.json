@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "song_id": "morning-workshop-v1",
+  "stages": {
+    "intent": {
+      "questions": [
+        {"id": "i1", "dimension": "theme", "question": "这段音乐要表现什么主题？", "answer": "清晨工作室开始运转", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "i2", "dimension": "emotion", "question": "情绪更偏平静专注还是兴奋启动？", "answer": "平静专注，带一点期待", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "i3", "dimension": "style", "question": "偏电子氛围还是电影感配乐？", "answer": "轻电子氛围配乐", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "i4", "dimension": "use_case", "question": "主要配合什么场景？", "answer": "产品制作过程视频", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "i5", "dimension": "song_form", "question": "使用主唱还是纯器乐？", "answer": "纯器乐，以合成器承担主旋律", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "i6", "dimension": "target_length", "question": "希望片段多长、是否留转场空间？", "answer": "约一分钟，留出清晰转场", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"}
+      ],
+      "confirmed": true
+    },
+    "music_design": {
+      "questions": [
+        {"id": "m1", "dimension": "rhythm_tempo", "question": "节奏更舒缓还是带持续推动力？", "answer": "中速、稳定推动", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "m2", "dimension": "instrumentation", "question": "除合成器外需要哪些层次？", "answer": "柔和电子鼓、低音脉冲和少量钢片琴", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "m3", "dimension": "performance", "question": "主奏更连贯柔和还是短句跳跃？", "answer": "短句跳跃，保持克制", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "m4", "dimension": "structure", "question": "先铺氛围还是直接进入主循环？", "answer": "短前奏后快速进入主循环", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "m5", "dimension": "energy_arc", "question": "能量如何变化？", "answer": "逐步增加层次，中段短暂减薄后收束", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"}
+      ],
+      "confirmed": true
+    }
+  },
+  "draft": {
+    "accepted": true,
+    "generation_authorized": false
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Music3 generation request compatibility profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["duration_mode", "duration_seconds", "seed_mode", "seed", "versions", "fade_out_seconds"],
+  "properties": {
+    "duration_mode": {"enum": ["auto", "target"]},
+    "duration_seconds": {"type": ["integer", "null"], "minimum": 10, "maximum": 300, "multipleOf": 10},
+    "seed_mode": {"enum": ["random", "fixed"]},
+    "seed": {"type": ["integer", "null"], "minimum": 0, "maximum": 2147483647},
+    "versions": {"type": "integer", "minimum": 1, "maximum": 8},
+    "fade_out_seconds": {"type": "number", "minimum": 0, "maximum": 30}
+  }
+}

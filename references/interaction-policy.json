@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "questions_per_round": 1,
+  "intent": {
+    "minimum_questions": 6,
+    "required_dimensions": [
+      "theme",
+      "emotion",
+      "style",
+      "use_case",
+      "song_form",
+      "target_length"
+    ]
+  },
+  "music_design": {
+    "minimum_questions": 5,
+    "required_dimensions": [
+      "rhythm_tempo",
+      "instrumentation",
+      "performance",
+      "structure",
+      "energy_arc"
+    ],
+    "instrumental_dimension_labels": {
+      "performance": "主奏表现"
+    }
+  },
+  "allowed_question_sources": [
+    "user_answer",
+    "confirmed_existing"
+  ],
+  "recommendation_statuses": [
+    "not_applicable",
+    "pending",
+    "confirmed"
+  ]
+}

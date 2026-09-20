@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Music3 guided creation state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "song_id", "stages", "draft"],
+  "properties": {
+    "version": {"const": "1.0"},
+    "song_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$"},
+    "stages": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intent", "music_design"],
+      "properties": {
+        "intent": {"$ref": "#/$defs/stage"},
+        "music_design": {"$ref": "#/$defs/stage"}
+      }
+    },
+    "draft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accepted", "generation_authorized"],
+      "properties": {
+        "accepted": {"type": "boolean"},
+        "generation_authorized": {"type": "boolean"}
+      }
+    }
+  },
+  "$defs": {
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["questions", "confirmed"],
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "dimension", "question", "answer", "source", "asked", "resolved", "recommendation_status"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "dimension": {"type": "string", "minLength": 1},
+              "question": {"type": "string", "minLength": 1},
+              "answer": {"type": "string", "minLength": 1},
+              "source": {"enum": ["user_answer", "confirmed_existing", "prefilled"]},
+              "asked": {"type": "boolean"},
+              "resolved": {"type": "boolean"},
+              "recommendation_status": {"enum": ["not_applicable", "pending", "confirmed"]}
+            }
+          }
+        },
+        "confirmed": {"type": "boolean"}
+      }
+    }
+  }
+}

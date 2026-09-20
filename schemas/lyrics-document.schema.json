@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Music3 lyrics document compatibility profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "language", "sections"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "language": {"type": "string", "minLength": 2, "maxLength": 35},
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["section_id", "tag", "title", "instrumental", "lines", "music_intent"],
+        "properties": {
+          "section_id": {"type": "string", "format": "uuid"},
+          "tag": {"enum": ["Intro", "Verse", "Pre-Chorus", "Chorus", "Post-Chorus", "Bridge", "Instrumental", "Solo", "Outro"]},
+          "title": {"type": "string", "maxLength": 200},
+          "instrumental": {"type": "boolean"},
+          "lines": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 1000}},
+          "music_intent": {"type": "string", "maxLength": 1000}
+        }
+      }
+    }
+  }
+}

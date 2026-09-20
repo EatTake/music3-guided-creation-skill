@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "song_id": "window-light-v1",
+  "stages": {
+    "intent": {
+      "questions": [
+        {"id": "i1", "dimension": "theme", "question": "这首歌最想留下哪个画面？", "answer": "夜归时看到家里窗灯还亮着", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "i2", "dimension": "emotion", "question": "情绪更偏温暖陪伴还是强烈感动？", "answer": "温暖陪伴，表达克制", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "i3", "dimension": "style", "question": "更接近木吉他民谣还是钢琴流行？", "answer": "木吉他民谣", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "i4", "dimension": "use_case", "question": "主要用于日常听还是家庭纪念视频？", "answer": "家庭纪念视频", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "i5", "dimension": "song_form", "question": "使用主唱还是纯器乐？", "answer": "普通话单人主唱，由助手写词", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "i6", "dimension": "target_length", "question": "希望是短片段还是完整歌曲？", "answer": "约两分钟，留少量器乐空间", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"}
+      ],
+      "confirmed": true
+    },
+    "music_design": {
+      "questions": [
+        {"id": "m1", "dimension": "rhythm_tempo", "question": "律动希望舒缓还是自然流动？", "answer": "自然流动，鼓点克制", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "m2", "dimension": "instrumentation", "question": "木吉他之外希望加入什么层次？", "answer": "轻钢琴和柔和弦乐", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "m3", "dimension": "performance", "question": "主唱更贴耳轻唱还是自然叙述？", "answer": "温暖男声，自然叙述", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "m4", "dimension": "structure", "question": "先铺垫再进副歌，还是尽早进入副歌？", "answer": "先用一段主歌铺垫，再进入副歌", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"},
+        {"id": "m5", "dimension": "energy_arc", "question": "情绪保持克制还是逐步推高？", "answer": "逐步推高，结尾回到安静", "source": "user_answer", "asked": true, "resolved": true, "recommendation_status": "not_applicable"}
+      ],
+      "confirmed": true
+    }
+  },
+  "draft": {
+    "accepted": true,
+    "generation_authorized": false
+  }
+}

@@ -13,18 +13,25 @@
       "additionalProperties": false,
       "required": ["primary_genre", "fusion_genres", "primary_mood", "secondary_moods", "tempo_mode", "bpm", "key", "energy", "imagery", "production", "custom_notes"],
       "properties": {
-        "primary_genre": {"type": "string", "minLength": 1, "maxLength": 100},
-        "fusion_genres": {"type": "array", "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}},
-        "primary_mood": {"type": "string", "minLength": 1, "maxLength": 100},
-        "secondary_moods": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}},
+        "primary_genre": {"type": "string", "minLength": 1, "maxLength": 100, "pattern": "^(?=.*\\S)[^\\r\\n]*$"},
+        "fusion_genres": {"type": "array", "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
+        "primary_mood": {"type": "string", "minLength": 1, "maxLength": 100, "pattern": "^(?=.*\\S)[^\\r\\n]*$"},
+        "secondary_moods": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
         "tempo_mode": {"type": ["string", "null"], "enum": ["slow", "medium", "fast", "bpm", null]},
         "bpm": {"type": ["integer", "null"], "minimum": 20, "maximum": 300},
-        "key": {"type": ["string", "null"], "maxLength": 100},
-        "energy": {"type": ["string", "null"], "maxLength": 100},
-        "imagery": {"type": "array", "items": {"type": "string", "maxLength": 300}},
-        "production": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 300}},
-        "custom_notes": {"type": "string", "maxLength": 4000}
-      }
+        "key": {"type": ["string", "null"], "minLength": 1, "maxLength": 100, "pattern": "^(?=.*\\S)[^\\r\\n]*$"},
+        "energy": {"type": ["string", "null"], "minLength": 1, "maxLength": 100, "pattern": "^(?=.*\\S)[^\\r\\n]*$"},
+        "imagery": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 300, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
+        "production": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 300, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
+        "custom_notes": {"type": "string", "maxLength": 4000, "pattern": "^[^\\r\\n]*$"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"tempo_mode": {"const": "bpm"}}, "required": ["tempo_mode"]},
+          "then": {"properties": {"bpm": {"type": "integer", "minimum": 20, "maximum": 300}}},
+          "else": {"properties": {"bpm": {"type": "null"}}}
+        }
+      ]
     },
     "vocal": {
       "type": "object",
@@ -32,24 +39,38 @@
       "required": ["mode", "lead", "timbre", "delivery", "harmony", "effects"],
       "properties": {
         "mode": {"enum": ["vocal", "instrumental"]},
-        "lead": {"type": ["string", "null"], "maxLength": 100},
-        "timbre": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 200}},
-        "delivery": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 300}},
-        "harmony": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 300}},
-        "effects": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 300}}
-      }
+        "lead": {"type": ["string", "null"], "minLength": 1, "maxLength": 100, "pattern": "^(?=.*\\S)[^\\r\\n]*$"},
+        "timbre": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
+        "delivery": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 300, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
+        "harmony": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 300, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
+        "effects": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 300, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"mode": {"const": "instrumental"}}, "required": ["mode"]},
+          "then": {
+            "properties": {
+              "lead": {"type": "null"},
+              "timbre": {"maxItems": 0},
+              "delivery": {"maxItems": 0},
+              "harmony": {"maxItems": 0},
+              "effects": {"maxItems": 0}
+            }
+          }
+        }
+      ]
     },
     "arrangement": {
       "type": "object",
       "additionalProperties": false,
       "required": ["template_id", "primary_layers", "secondary_layers", "foundation", "transitions", "section_development"],
       "properties": {
-        "template_id": {"type": ["string", "null"], "maxLength": 100},
-        "primary_layers": {"type": "array", "items": {"type": "string", "maxLength": 1000}},
-        "secondary_layers": {"type": "array", "items": {"type": "string", "maxLength": 1000}},
-        "foundation": {"type": "array", "items": {"type": "string", "maxLength": 1000}},
-        "transitions": {"type": "array", "items": {"type": "string", "maxLength": 1000}},
-        "section_development": {"type": "array", "items": {"type": "string", "maxLength": 1000}}
+        "template_id": {"type": ["string", "null"], "minLength": 1, "maxLength": 100, "pattern": "^(?=.*\\S)[^\\r\\n]*$"},
+        "primary_layers": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 1000, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
+        "secondary_layers": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 1000, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
+        "foundation": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 1000, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
+        "transitions": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 1000, "pattern": "^(?=.*\\S)[^\\r\\n]*$"}},
+        "section_development": {"type": "array", "maxItems": 0}
       }
     }
   }

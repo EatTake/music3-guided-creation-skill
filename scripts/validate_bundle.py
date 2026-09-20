@@ -89,9 +89,14 @@ def is_uuid(value) -> bool:
         return False
 
 
-def string_list(value, name: str, max_length: int) -> None:
+def string_list(value, name: str, max_length: int, *, unique: bool = False) -> None:
     require(isinstance(value, list), f"{name} must be an array")
-    require(all(isinstance(item, str) and len(item) <= max_length for item in value), f"Invalid {name} item")
+    require(
+        all(isinstance(item, str) and item.strip() and len(item) <= max_length and "\n" not in item and "\r" not in item for item in value),
+        f"Invalid {name} item",
+    )
+    if unique:
+        require(len(value) == len(set(value)), f"Duplicate {name} item")
 
 
 def validate_guidance(guidance, policy) -> None:
@@ -146,38 +151,37 @@ def validate_spec(spec, warnings) -> None:
 
     global_data = spec["global"]
     require(isinstance(global_data, dict) and set(global_data) == GLOBAL_FIELDS, "global fields mismatch")
-    require(isinstance(global_data["primary_genre"], str) and 1 <= len(global_data["primary_genre"]) <= 100, "Invalid primary_genre")
-    require(isinstance(global_data["primary_mood"], str) and 1 <= len(global_data["primary_mood"]) <= 100, "Invalid primary_mood")
-    string_list(global_data["fusion_genres"], "fusion_genres", 100)
+    require(isinstance(global_data["primary_genre"], str) and global_data["primary_genre"].strip() and len(global_data["primary_genre"]) <= 100 and "\n" not in global_data["primary_genre"] and "\r" not in global_data["primary_genre"], "Invalid primary_genre")
+    require(isinstance(global_data["primary_mood"], str) and global_data["primary_mood"].strip() and len(global_data["primary_mood"]) <= 100 and "\n" not in global_data["primary_mood"] and "\r" not in global_data["primary_mood"], "Invalid primary_mood")
+    string_list(global_data["fusion_genres"], "fusion_genres", 100, unique=True)
     require(len(global_data["fusion_genres"]) <= 3, "Too many fusion_genres")
-    string_list(global_data["secondary_moods"], "secondary_moods", 100)
+    string_list(global_data["secondary_moods"], "secondary_moods", 100, unique=True)
     require(global_data["tempo_mode"] in {"slow", "medium", "fast", "bpm", None}, "Invalid tempo_mode")
     if global_data["tempo_mode"] == "bpm":
         require(type(global_data["bpm"]) is int and 20 <= global_data["bpm"] <= 300, "bpm mode needs BPM 20-300")
     else:
         require(global_data["bpm"] is None, "bpm must be null unless tempo_mode is bpm")
-    require(global_data["key"] is None or isinstance(global_data["key"], str), "Invalid key")
-    require(global_data["energy"] is None or isinstance(global_data["energy"], str), "Invalid energy")
+    require(global_data["key"] is None or (isinstance(global_data["key"], str) and len(global_data["key"]) <= 100 and global_data["key"].strip() and "\n" not in global_data["key"] and "\r" not in global_data["key"]), "Invalid key")
+    require(global_data["energy"] is None or (isinstance(global_data["energy"], str) and len(global_data["energy"]) <= 100 and global_data["energy"].strip() and "\n" not in global_data["energy"] and "\r" not in global_data["energy"]), "Invalid energy")
     string_list(global_data["imagery"], "imagery", 300)
     string_list(global_data["production"], "production", 300)
-    require(isinstance(global_data["custom_notes"], str) and len(global_data["custom_notes"]) <= 4000, "Invalid custom_notes")
+    require(isinstance(global_data["custom_notes"], str) and len(global_data["custom_notes"]) <= 4000 and "\n" not in global_data["custom_notes"] and "\r" not in global_data["custom_notes"], "Invalid custom_notes")
 
     vocal = spec["vocal"]
     require(isinstance(vocal, dict) and set(vocal) == VOCAL_FIELDS, "vocal fields mismatch")
     require(vocal["mode"] in {"vocal", "instrumental"}, "Invalid vocal mode")
-    require(vocal["lead"] is None or isinstance(vocal["lead"], str), "Invalid lead")
+    require(vocal["lead"] is None or (isinstance(vocal["lead"], str) and len(vocal["lead"]) <= 100 and vocal["lead"].strip() and "\n" not in vocal["lead"] and "\r" not in vocal["lead"]), "Invalid lead")
     for name, limit in (("timbre", 200), ("delivery", 300), ("harmony", 300), ("effects", 300)):
-        string_list(vocal[name], name, limit)
+        string_list(vocal[name], name, limit, unique=True)
     if vocal["mode"] == "instrumental":
         require(vocal["lead"] is None and not any(vocal[name] for name in ("timbre", "delivery", "harmony", "effects")), "Instrumental mode must clear vocal settings")
 
     arrangement = spec["arrangement"]
     require(isinstance(arrangement, dict) and set(arrangement) == ARRANGEMENT_FIELDS, "arrangement fields mismatch")
-    require(arrangement["template_id"] is None or isinstance(arrangement["template_id"], str), "Invalid template_id")
+    require(arrangement["template_id"] is None or (isinstance(arrangement["template_id"], str) and len(arrangement["template_id"]) <= 100 and arrangement["template_id"].strip() and "\n" not in arrangement["template_id"] and "\r" not in arrangement["template_id"]), "Invalid template_id")
     for name in ("primary_layers", "secondary_layers", "foundation", "transitions", "section_development"):
         string_list(arrangement[name], name, 1000)
-    if arrangement["section_development"]:
-        warnings.append("section_development is not empty; check for duplication with music_intent")
+    require(not arrangement["section_development"], "section_development must be empty; use lyrics music_intent")
 
     list_fields = [
         *global_data["imagery"],
@@ -198,7 +202,7 @@ def validate_spec(spec, warnings) -> None:
 def validate_lyrics(lyrics, vocal_mode: str, warnings) -> None:
     require(isinstance(lyrics, dict) and set(lyrics) == {"schema_version", "language", "sections"}, "lyrics_document fields mismatch")
     require(lyrics["schema_version"] == "2.0", "Unsupported lyrics version")
-    require(isinstance(lyrics["language"], str) and 2 <= len(lyrics["language"]) <= 35, "Invalid language")
+    require(isinstance(lyrics["language"], str) and lyrics["language"].strip() and 2 <= len(lyrics["language"]) <= 35 and "\n" not in lyrics["language"] and "\r" not in lyrics["language"], "Invalid language")
     require(isinstance(lyrics["sections"], list) and lyrics["sections"], "At least one section is required")
     if vocal_mode == "instrumental":
         require(lyrics["language"] == "und", "Instrumental language must be und")
@@ -208,7 +212,7 @@ def validate_lyrics(lyrics, vocal_mode: str, warnings) -> None:
         require(is_uuid(section["section_id"]) and section["section_id"] not in ids, "Invalid or duplicate section_id")
         ids.add(section["section_id"])
         require(section["tag"] in TAGS, "Unsupported section tag")
-        require(isinstance(section["title"], str) and len(section["title"]) <= 200, "Invalid section title")
+        require(isinstance(section["title"], str) and len(section["title"]) <= 200 and "\n" not in section["title"] and "\r" not in section["title"], "Invalid section title")
         require(type(section["instrumental"]) is bool, "instrumental must be boolean")
         require(isinstance(section["lines"], list), "lines must be an array")
         require(isinstance(section["music_intent"], str) and len(section["music_intent"]) <= 1000, "Invalid music_intent")

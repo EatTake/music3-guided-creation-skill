@@ -74,7 +74,9 @@ No dependency manifest, install command, vendored package, build step or remote-
 - Invalid prefilled-as-asked state: rejected by validator
 - Invalid pending recommendation state: rejected by validator
 - Invalid auto request with numeric duration: rejected by validator
+- Compiler rejects caption CR/LF injection, unsupported tags, empty sections, duplicate list items and invalid vocal/instrumental mixtures
+- Compiler rejects direct inputs over 12000 caption or 20000 lyrics characters
 
 ## Conclusion
 
-**P2 — safe to publish.** This repository is a portable creation workflow, structured-output contract and local validator. Any external generation adapter must be separately audited because authentication, network access, backend submission, asset download and service-specific behavior are intentionally outside this repository.
+**P2 — safe to publish.** This repository is a portable creation workflow, structured-output contract and local validator/compiler. The compiler now validates the input boundary and final output limits before writing. Any external generation adapter must be separately audited because authentication, network access, backend submission, asset download and service-specific behavior are intentionally outside this repository.

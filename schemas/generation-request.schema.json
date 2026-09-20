@@ -11,5 +11,17 @@
     "seed": {"type": ["integer", "null"], "minimum": 0, "maximum": 2147483647},
     "versions": {"type": "integer", "minimum": 1, "maximum": 8},
     "fade_out_seconds": {"type": "number", "minimum": 0, "maximum": 30}
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"duration_mode": {"const": "auto"}}, "required": ["duration_mode"]},
+      "then": {"properties": {"duration_seconds": {"type": "null"}}},
+      "else": {"properties": {"duration_seconds": {"type": "integer", "minimum": 10, "maximum": 300, "multipleOf": 10}}}
+    },
+    {
+      "if": {"properties": {"seed_mode": {"const": "random"}}, "required": ["seed_mode"]},
+      "then": {"properties": {"seed": {"type": "null"}}},
+      "else": {"properties": {"seed": {"type": "integer", "minimum": 0, "maximum": 2147483647}}}
+    }
+  ]
 }

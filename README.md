@@ -65,7 +65,7 @@ python scripts/compile_music3_input.py examples/instrumental --out instrumental-
 }
 ```
 
-`caption` 只包含音乐描述，`lyrics` 只包含 Music3 安全段落标签和可唱正文；器乐段使用 `(instrumental)` 占位。外部适配器必须再次对照目标后端当前 Schema 和长度限制。
+`caption` 只包含音乐描述，`lyrics` 只包含 Music3 安全段落标签和可唱正文；器乐段使用 `(instrumental)` 占位。编译器会先拒绝结构、换行、非法标签、空段落、重复项和人声/器乐矛盾，再检查 `caption` ≤ 12000、`lyrics` ≤ 20000 字符。外部适配器仍必须对照目标后端当前 Schema、字节/token 限制和接口约束。
 
 ## 重要默认值
 

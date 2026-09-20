@@ -119,4 +119,4 @@ python scripts/validate_bundle.py examples/vocal
 python scripts/validate_bundle.py examples/instrumental
 ```
 
-脚本只读本地 JSON，禁止覆盖文件，不联网，不安装依赖，不连接 Music3，不生成音频。
+脚本只读本地 JSON，禁止覆盖文件，不联网，不安装依赖，不连接 Music3，不生成音频。编译器会拒绝结构错误、非法标签、换行注入、空段落、重复项、人声/器乐矛盾和超出本地 `caption`/`lyrics` 字符上限的结果。
